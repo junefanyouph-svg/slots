@@ -23,14 +23,27 @@ async function runSpin(isFree = false) {
     Array.from({ length: COLS }, randSym)
   );
 
-  // Forced win nudge every 20 spins
+  // Forced win nudge every 20 spins.
+  // Symbol probabilities for the forced win:
+  //   💎 Sapphire Gem    — 45%  (guaranteed common, low payout)
+  //   🔮 Crystal Ball    — 40%  (guaranteed common, low payout)
+  //   🏺 Golden Urn      —  9%  (uncommon)
+  //   🗡️ Lightning Sword —  4%  (rare)
+  //   👁️ Eye of Zeus     —  2%  (very rare, highest payout)
+  const FORCED_WIN_WEIGHTS = [2, 4, 9, 45, 40]; // maps to SYMBOLS order
   const forceWin = !isFree && spinCount % 20 === 0;
   if (forceWin) {
-    const sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+    const tot = FORCED_WIN_WEIGHTS.reduce((a, b) => a + b, 0);
+    let pick = Math.random() * tot;
+    let forcedSym = SYMBOLS.at(-1);
+    for (let i = 0; i < SYMBOLS.length; i++) {
+      pick -= FORCED_WIN_WEIGHTS[i];
+      if (pick <= 0) { forcedSym = SYMBOLS[i]; break; }
+    }
     let placed = 0;
     for (let r = 0; r < ROWS && placed < WIN_THRESH; r++)
       for (let c = 0; c < COLS && placed < WIN_THRESH; c++)
-        if (Math.random() < 0.7) { finals[r][c] = sym; placed++; }
+        if (Math.random() < 0.7) { finals[r][c] = forcedSym; placed++; }
   }
 
   // Animate all columns (staggered start)
