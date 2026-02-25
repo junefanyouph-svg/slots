@@ -1,0 +1,985 @@
+/* =============================================================
+   GATES OF OLYMPUS — Stylesheet
+   Sections:
+     1. Variables & Reset
+     2. Base Layout
+     3. Loading Screen
+     4. Main Menu
+     5. Game Root & Clouds
+     6. Reel Grid & Tiles
+     7. Win Highlights
+     8. HUD & Controls
+     9. Overlays (Free Spins, Buy Modal)
+    10. Paytable
+    11. Animations
+   ============================================================= */
+
+
+/* ── 1. Variables & Reset ─────────────────────────────────── */
+:root {
+  --gold:   #f5c842;
+  --gold2:  #ffd700;
+  --marble: #e8dfc8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ── 2. Base Layout ───────────────────────────────────────── */
+body {
+  background: #0a0e2a;
+  font-family: 'Cinzel', serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, #1a2a6c, #0a0e2a 60%);
+  z-index: 0;
+}
+
+body.freespin-mode::before {
+  background: radial-gradient(ellipse at 50% 0%, #3a1f00, #1a0a00 40%, #0a0510);
+}
+
+
+/* ── 3. Loading Screen ────────────────────────────────────── */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: radial-gradient(ellipse at 50% 30%, #0e1a5e, #050b2a 60%, #000510);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .8s, visibility .8s;
+}
+
+#loadingScreen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.load-stars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle linear infinite;
+}
+
+.load-zeus {
+  font-size: clamp(70px, 15vw, 130px);
+  animation: zFloat 2s ease-in-out infinite alternate, fadeD .8s .1s ease both;
+  margin-bottom: 40px;
+  filter: drop-shadow(0 0 30px rgba(255, 200, 0, .5));
+}
+
+.load-logo {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(28px, 7vw, 64px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #5a3a00, var(--gold2), #fff8c0, var(--gold2), #5a3a00);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(255, 200, 0, .7));
+  letter-spacing: 5px;
+  animation: shine 2s linear infinite, fadeD .8s ease both;
+  margin-bottom: 6px;
+}
+
+.load-subtitle {
+  color: rgba(220, 200, 150, .7);
+  font-size: clamp(10px, 2vw, 15px);
+  letter-spacing: 6px;
+  margin-bottom: 50px;
+  animation: fadeD .8s .2s ease both;
+}
+
+.load-bar-wrap {
+  width: clamp(200px, 50vw, 380px);
+  height: 8px;
+  background: rgba(255, 255, 255, .08);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 200, 0, .25);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.load-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #c8860a, var(--gold2), #fff8a0, var(--gold2));
+  border-radius: 10px;
+  transition: width .12s linear;
+  box-shadow: 0 0 10px rgba(255, 200, 0, .8);
+}
+
+.load-pct {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.load-tip {
+  margin-top: 20px;
+  font-size: clamp(9px, 1.5vw, 12px);
+  color: rgba(200, 180, 120, .5);
+  letter-spacing: 1px;
+  text-align: center;
+  max-width: 320px;
+  animation: tipF 2s ease-in-out infinite alternate;
+}
+
+
+/* ── 4. Main Menu ─────────────────────────────────────────── */
+#mainMenu {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .6s, visibility .6s;
+}
+
+#mainMenu.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 20%, #0e1e70, #060e3a 55%, #020510);
+  z-index: 0;
+}
+
+.menu-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(80, 30, 0, .4), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(80, 30, 0, .4), transparent 50%);
+}
+
+.pillar {
+  position: absolute;
+  bottom: 0;
+  width: clamp(40px, 7vw, 80px);
+  height: 85vh;
+  background: linear-gradient(90deg, #a08040, #e8d080 30%, #c8a850 55%, #f0e090 65%, #c8a850 80%, #a08040);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 30px rgba(200, 160, 60, .3);
+  z-index: 1;
+}
+
+.pillar::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -14px;
+  right: -14px;
+  height: 36px;
+  background: linear-gradient(90deg, #8a6820, #e8d080, #8a6820);
+  border-radius: 4px;
+}
+
+.pillar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -14px;
+  right: -14px;
+  height: 24px;
+  background: linear-gradient(90deg, #8a6820, #e8d080, #8a6820);
+}
+
+.pillar.left  { left:  clamp(10px, 5vw, 60px); }
+.pillar.right { right: clamp(10px, 5vw, 60px); }
+
+.menu-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: linear-gradient(180deg, #8a6a20, #4a3208);
+  z-index: 2;
+  box-shadow: 0 -4px 20px rgba(200, 150, 0, .3);
+}
+
+.menu-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  text-align: center;
+}
+
+.menu-zeus {
+  font-size: clamp(80px, 18vw, 160px);
+  animation: mZeus 3s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 40px rgba(255, 200, 0, .6));
+  line-height: 1;
+}
+
+.menu-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(24px, 6vw, 60px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #5a3a00, var(--gold2) 30%, #fff8c0 50%, var(--gold2) 70%, #5a3a00);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 200, 0, .6));
+  letter-spacing: 4px;
+  animation: shine 3s linear infinite;
+  line-height: 1.1;
+}
+
+.menu-tagline {
+  font-size: clamp(10px, 2vw, 16px);
+  color: rgba(230, 210, 150, .75);
+  letter-spacing: 4px;
+}
+
+.menu-divider {
+  width: clamp(120px, 40vw, 300px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .6;
+}
+
+.menu-play-btn {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(16px, 3vw, 24px);
+  font-weight: 900;
+  letter-spacing: 4px;
+  padding: clamp(14px, 2.5vw, 20px) clamp(40px, 8vw, 80px);
+  background: linear-gradient(135deg, #8b5e00, var(--gold2), #fff0a0, var(--gold2), #8b5e00);
+  background-size: 200%;
+  color: #1a0800;
+  border: none;
+  border-radius: 60px;
+  cursor: pointer;
+  animation: shine 2s linear infinite, pPulse 2s ease-in-out infinite alternate;
+  transition: transform .2s;
+}
+
+.menu-play-btn:hover  { transform: scale(1.08); box-shadow: 0 0 60px rgba(255, 200, 0, .9); }
+.menu-play-btn:active { transform: scale(.96); }
+
+.menu-info-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.menu-badge {
+  background: rgba(255, 200, 0, .08);
+  border: 1px solid rgba(255, 200, 0, .25);
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-size: clamp(9px, 1.5vw, 12px);
+  color: rgba(230, 210, 150, .8);
+  letter-spacing: 1px;
+}
+
+.menu-lightning-l,
+.menu-lightning-r {
+  position: absolute;
+  font-size: clamp(24px, 5vw, 48px);
+  animation: bFlash 1.5s ease-in-out infinite;
+  z-index: 5;
+}
+
+.menu-lightning-l { left:  clamp(80px, 14vw, 160px); top: 28%; }
+.menu-lightning-r { right: clamp(80px, 14vw, 160px); top: 33%; animation-delay: .7s; }
+
+
+/* ── 5. Game Root & Clouds ────────────────────────────────── */
+#gameRoot {
+  transition: opacity .5s;
+}
+
+#gameRoot.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  overflow: hidden;
+  z-index: 0;
+  opacity: .3;
+}
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 50px;
+  filter: blur(20px);
+  animation: drift linear infinite;
+}
+
+.cloud:nth-child(1) { width: 200px; height: 60px; top: 20px; left: -200px; animation-duration: 25s; }
+.cloud:nth-child(2) { width: 300px; height: 80px; top: 50px; left: -300px; animation-duration: 35s; animation-delay: 5s; }
+.cloud:nth-child(3) { width: 150px; height: 45px; top: 10px; left: -150px; animation-duration: 20s; animation-delay: 12s; }
+
+.game-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+}
+
+.title-banner {
+  background: linear-gradient(135deg, #8b6914, var(--gold) 40%, #fff5a0 55%, var(--gold) 70%, #8b6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(20px, 4vw, 38px);
+  font-weight: 900;
+  letter-spacing: 4px;
+  filter: drop-shadow(0 0 20px rgba(245, 200, 66, .8));
+  padding: 4px 20px;
+}
+
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: fall 1.5s ease-in forwards;
+}
+
+.win-message {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.win-message.show { opacity: 1; }
+
+.win-text {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(32px, 8vw, 72px);
+  color: var(--gold2);
+  text-shadow: 0 0 40px rgba(255, 200, 0, .9);
+  animation: winIn .4s ease-out;
+  text-align: center;
+  padding: 20px;
+}
+
+
+/* ── 6. Reel Grid & Tiles ─────────────────────────────────── */
+.temple-frame {
+  position: relative;
+  background: linear-gradient(180deg, #1b2d6b, #0d1a4a);
+  border: 3px solid var(--gold);
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(245, 200, 66, .3), inset 0 0 40px rgba(0, 0, 20, .5);
+  padding: 16px;
+}
+
+.temple-frame::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(245, 200, 66, .3);
+  pointer-events: none;
+}
+
+body.freespin-mode .temple-frame {
+  border-color: var(--gold2);
+  animation: tGlow 1s ease-in-out infinite alternate;
+}
+
+body.freespin-mode .title-banner {
+  filter: drop-shadow(0 0 30px rgba(255, 150, 0, 1));
+}
+
+.reel-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  width: min(560px, 92vw);
+  height: min(450px, 72vh);
+}
+
+.reel-col {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(8, 15, 50, .85);
+  border: 1.5px solid rgba(245, 200, 66, .2);
+  box-shadow: inset 0 0 12px rgba(0, 0, 20, .6);
+}
+
+/* Top/bottom fade masks on each column */
+.reel-col::before,
+.reel-col::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 25%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.reel-col::before { top:    0; background: linear-gradient(to bottom, rgba(8, 15, 50, .85), transparent); }
+.reel-col::after  { bottom: 0; background: linear-gradient(to top,   rgba(8, 15, 50, .85), transparent); }
+
+.reel-tile {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(20px, 4.5vw, 36px);
+  border-bottom: 1px solid rgba(245, 200, 66, .08);
+  user-select: none;
+}
+
+
+/* ── 7. Win Highlights ────────────────────────────────────── */
+.reel-tile.winner {
+  position: relative;
+  border-radius: 6px;
+  z-index: 2;
+  animation: winGlow .7s ease-in-out infinite alternate;
+}
+
+.reel-tile.winner::after {
+  content: attr(data-count) '×';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--gold2);
+  color: #1a0800;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 4px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Dim non-winning tiles when there are winners */
+.has-winners .reel-tile:not(.winner):not(.scatter-tile) {
+  opacity: .28;
+  transition: opacity .25s;
+}
+
+.reel-tile.scatter-tile {
+  background: radial-gradient(ellipse at center, rgba(255, 230, 80, .5), rgba(255, 180, 0, .2) 70%, transparent) !important;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 2px #ffe566, 0 0 22px rgba(255, 230, 80, .9);
+  animation: pop .5s ease-in-out infinite alternate;
+}
+
+
+/* ── 8. HUD & Controls ────────────────────────────────────── */
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(560px, 92vw);
+  padding: 0 4px;
+  margin-bottom: 2px;
+}
+
+.info-btn {
+  background: transparent;
+  border: 1.5px solid rgba(245, 200, 66, .4);
+  color: var(--gold);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+}
+
+.info-btn:hover { background: rgba(245, 200, 66, .1); }
+
+.balance-pill {
+  background: rgba(10, 20, 60, .9);
+  border: 1.5px solid rgba(245, 200, 66, .4);
+  border-radius: 20px;
+  padding: 4px 14px;
+  color: var(--gold2);
+  font-size: 14px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.balance-pill .lbl {
+  color: rgba(255, 255, 255, .5);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.info-bar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  width: min(560px, 92vw);
+  justify-content: center;
+}
+
+.info-box {
+  background: rgba(10, 20, 60, .8);
+  border: 1.5px solid rgba(245, 200, 66, .4);
+  border-radius: 8px;
+  padding: 6px 16px;
+  text-align: center;
+  min-width: 110px;
+}
+
+.info-label {
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.info-value  { font-size: 18px; color: #fff; font-weight: 600; }
+.total-win   { color: var(--gold2); font-size: 22px; }
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .1s;
+  padding: 8px 16px;
+}
+
+.btn:active { transform: scale(.95); }
+
+.btn-bet {
+  background: rgba(10, 20, 60, .9);
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-bet:hover { background: rgba(245, 200, 66, .15); }
+
+.bet-display {
+  background: rgba(10, 20, 60, .9);
+  border: 1.5px solid rgba(245, 200, 66, .4);
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  padding: 6px 14px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.spin-btn {
+  background: linear-gradient(135deg, #c8860a, var(--gold2), #c8860a);
+  color: #1a0a00;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 32px;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, .3);
+  box-shadow: 0 0 20px rgba(245, 200, 66, .5);
+  font-family: 'Cinzel Decorative', cursive;
+  letter-spacing: 2px;
+}
+
+.spin-btn:hover:not(:disabled) { box-shadow: 0 0 35px rgba(245, 200, 66, .8); transform: scale(1.05); }
+.spin-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.fs-hud {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  background: linear-gradient(135deg, rgba(20, 10, 0, .92), rgba(80, 50, 0, .85));
+  border: 2px solid var(--gold2);
+  border-radius: 40px;
+  padding: 8px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: hPulse 1s ease-in-out infinite alternate;
+}
+
+.fs-hud-label { font-size: 13px; color: var(--marble); letter-spacing: 2px; }
+
+.fs-hud-count {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 28px;
+  color: var(--gold2);
+  text-shadow: 0 0 12px rgba(255, 200, 0, .8);
+  min-width: 40px;
+  text-align: center;
+}
+
+.buy-fs-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 200, 0, .5);
+  background: linear-gradient(135deg, rgba(80, 40, 0, .9), rgba(140, 80, 0, .8));
+  color: var(--gold2);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+  box-shadow: 0 0 10px rgba(255, 160, 0, .3);
+  white-space: nowrap;
+}
+
+.buy-fs-btn:hover:not(:disabled) { transform: scale(1.06); box-shadow: 0 0 20px rgba(255, 160, 0, .6); }
+.buy-fs-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+
+/* ── 9. Overlays (Free Spins, Buy Modal) ──────────────────── */
+
+/* Shared overlay base */
+.fs-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .88);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s;
+}
+
+.fs-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Free spin intro / summary box */
+.fs-intro-box {
+  text-align: center;
+  animation: fsIn .5s cubic-bezier(.175, .885, .32, 1.275);
+}
+
+.fs-helmet-anim {
+  font-size: clamp(60px, 12vw, 100px);
+  animation: hSpin .8s ease-out, hFloat 2s ease-in-out .8s infinite alternate;
+  display: block;
+}
+
+.fs-intro-title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #8b6914, var(--gold2), #fff5a0, var(--gold2), #8b6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 200, 0, .8));
+  letter-spacing: 4px;
+  margin: 8px 0 4px;
+}
+
+.fs-intro-sub {
+  font-family: 'Cinzel', serif;
+  color: var(--marble);
+  font-size: clamp(12px, 2.5vw, 18px);
+  letter-spacing: 3px;
+  opacity: .85;
+}
+
+.fs-intro-count {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(60px, 14vw, 110px);
+  font-weight: 900;
+  color: var(--gold2);
+  text-shadow: 0 0 40px rgba(255, 200, 0, 1);
+  line-height: 1;
+  animation: cPop .4s .6s cubic-bezier(.175, .885, .32, 1.275) both;
+}
+
+.fs-lightning {
+  font-size: clamp(20px, 4vw, 32px);
+  margin-top: 10px;
+  animation: lFlash .3s ease-in-out infinite alternate;
+}
+
+/* Buy Free Spins modal */
+.buy-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, .82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+  backdrop-filter: blur(4px);
+}
+
+.buy-modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.buy-modal {
+  background: linear-gradient(160deg, #14245a, #0a1535 60%, #060c28);
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  padding: 28px 24px 20px;
+  width: min(480px, 92vw);
+  box-shadow: 0 0 60px rgba(255, 180, 0, .2);
+  animation: mIn .35s cubic-bezier(.22, 1.4, .36, 1);
+  position: relative;
+}
+
+.buy-modal-header  { text-align: center; margin-bottom: 20px; }
+.buy-modal-icon    { font-size: 40px; display: block; margin-bottom: 6px; animation: coinSpin 3s linear infinite; }
+.buy-modal-title   { font-family: 'Cinzel Decorative', cursive; font-size: clamp(18px, 4vw, 26px); color: var(--gold2); letter-spacing: 3px; filter: drop-shadow(0 0 10px rgba(255, 200, 0, .5)); }
+.buy-modal-sub     { font-size: 12px; color: rgba(220, 200, 150, .6); letter-spacing: 2px; margin-top: 4px; }
+
+.buy-single-pkg {
+  background: rgba(255, 200, 0, .06);
+  border: 1.5px solid rgba(255, 200, 0, .3);
+  border-radius: 14px;
+  padding: 20px 16px 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.bsp-helmet  { font-size: 48px; animation: hSpin .8s ease-out, hFloat 2.5s ease-in-out .8s infinite alternate; display: block; margin-bottom: 4px; }
+.bsp-spins   { font-family: 'Cinzel Decorative', cursive; font-size: clamp(48px, 10vw, 72px); color: var(--gold2); text-shadow: 0 0 20px rgba(255, 200, 0, .7); line-height: 1; }
+.bsp-label   { font-size: 12px; letter-spacing: 4px; color: rgba(220, 200, 150, .7); margin-bottom: 14px; }
+.bsp-divider { width: 60%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 200, 0, .4), transparent); margin: 0 auto 14px; }
+
+.bsp-cost-row   { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 4px; }
+.bsp-cost-label { font-size: 11px; letter-spacing: 3px; color: rgba(220, 200, 150, .55); }
+.bsp-cost-value { font-family: 'Cinzel Decorative', cursive; font-size: clamp(22px, 5vw, 32px); color: #fff; text-shadow: 0 0 12px rgba(255, 200, 0, .4); }
+.bsp-formula    { font-size: 11px; color: rgba(200, 180, 130, .5); letter-spacing: 1px; }
+
+.buy-confirm-purchase-btn {
+  width: 100%;
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(12px, 2.5vw, 16px);
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #8b5e00, var(--gold2), #fff0a0, var(--gold2), #8b5e00);
+  background-size: 200%;
+  color: #1a0800;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  animation: shine 2s linear infinite, pPulse 2s ease-in-out infinite alternate;
+  transition: transform .15s;
+  margin-bottom: 10px;
+}
+
+.buy-confirm-purchase-btn:hover    { transform: scale(1.03); }
+.buy-confirm-purchase-btn:disabled { opacity: .4; cursor: not-allowed; animation: none; }
+
+.buy-cancel-btn {
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 200, 0, .25);
+  background: transparent;
+  color: rgba(220, 200, 150, .6);
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  transition: color .2s, border-color .2s;
+}
+
+.buy-cancel-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+/* Buy confirm overlay */
+.buy-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: rgba(0, 0, 0, .75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+
+.buy-confirm-overlay.show { opacity: 1; }
+
+.buy-confirm-box   { text-align: center; animation: confPop .4s cubic-bezier(.175, .885, .32, 1.275); }
+.buy-confirm-icon  { font-size: clamp(60px, 14vw, 100px); display: block; margin-bottom: 10px; animation: hSpin .7s ease-out; }
+.buy-confirm-title { font-family: 'Cinzel Decorative', cursive; font-size: clamp(20px, 5vw, 40px); color: var(--gold2); text-shadow: 0 0 30px rgba(255, 200, 0, .9); letter-spacing: 3px; }
+.buy-confirm-sub   { color: var(--marble); font-size: clamp(12px, 2vw, 16px); letter-spacing: 2px; margin: 6px 0; }
+.buy-confirm-cost  { font-family: 'Cinzel Decorative', cursive; font-size: clamp(18px, 4vw, 28px); color: #ff6b6b; text-shadow: 0 0 12px rgba(255, 100, 100, .6); }
+
+
+/* ── 10. Paytable ─────────────────────────────────────────── */
+.paytable {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .85);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.paytable.open { display: flex; }
+
+.paytable-inner {
+  background: linear-gradient(180deg, #1b2d6b, #0d1a4a);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px 32px;
+  max-width: 480px;
+  width: 90vw;
+  text-align: center;
+}
+
+.paytable-inner h2 {
+  font-family: 'Cinzel Decorative', cursive;
+  color: var(--gold2);
+  margin-bottom: 16px;
+  font-size: 22px;
+}
+
+.pay-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(245, 200, 66, .1);
+  font-size: 14px;
+  color: var(--marble);
+}
+
+.pay-row span:first-child { font-size: 22px; width: 30px; }
+.pay-row span:last-child  { margin-left: auto; color: var(--gold); }
+
+.close-btn {
+  margin-top: 16px;
+  background: linear-gradient(135deg, #c8860a, var(--gold2));
+  color: #1a0a00;
+  font-family: 'Cinzel', serif;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 24px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+
+/* ── 11. Animations ───────────────────────────────────────── */
+@keyframes drift    { to { left: 110%; } }
+@keyframes shine    { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+@keyframes fadeD    { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: none; } }
+@keyframes zFloat   { to { transform: translateY(-15px) scale(1.04); filter: drop-shadow(0 0 40px rgba(255, 200, 0, .8)); } }
+@keyframes mZeus    { to { transform: translateY(-12px) scale(1.03); filter: drop-shadow(0 0 60px rgba(255, 200, 0, .9)); } }
+@keyframes tipF     { from { opacity: .3; } to { opacity: .8; } }
+@keyframes twinkle  { 0%, 100% { opacity: .1; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.3); } }
+@keyframes pPulse   { from { box-shadow: 0 0 20px rgba(255, 200, 0, .4); } to { box-shadow: 0 0 50px rgba(255, 200, 0, .8); } }
+@keyframes bFlash   { 0%, 100% { opacity: .2; transform: scale(.9); } 40% { opacity: 1; transform: scale(1.2); filter: brightness(2); } 50% { opacity: .1; } 60% { opacity: .9; } }
+@keyframes hPulse   { from { box-shadow: 0 0 14px rgba(255, 200, 0, .4); } to { box-shadow: 0 0 32px rgba(255, 200, 0, .9); } }
+@keyframes tGlow    { from { box-shadow: 0 0 30px rgba(255, 180, 0, .4); } to { box-shadow: 0 0 60px rgba(255, 180, 0, .8), 0 0 120px rgba(255, 100, 0, .3); } }
+@keyframes fsIn     { from { transform: scale(.4) rotate(-8deg); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes hSpin    { from { transform: rotateY(0) scale(0); } to { transform: rotateY(720deg) scale(1); } }
+@keyframes hFloat   { to { transform: translateY(-12px); } }
+@keyframes cPop     { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes lFlash   { to { filter: brightness(1.8); } }
+@keyframes pop      { to { transform: scale(1.09); } }
+@keyframes coinSpin { 50% { transform: rotateY(180deg); } }
+@keyframes mIn      { from { transform: scale(.8) translateY(30px); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes confPop  { from { transform: scale(.3) rotate(-5deg); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes winIn    { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes fall     { to { transform: translateY(100vh) scale(.3); opacity: 0; } }
+
+@keyframes winGlow {
+  from { background: rgba(80, 170, 255, .22); box-shadow: inset 0 0 10px rgba(100, 190, 255, .6), inset 0 0 20px rgba(60, 140, 255, .3); filter: drop-shadow(0 0 6px rgba(100, 200, 255, .9)); }
+  to   { background: rgba(120, 200, 255, .38); box-shadow: inset 0 0 18px rgba(140, 220, 255, .9), inset 0 0 35px rgba(80, 170, 255, .5); filter: drop-shadow(0 0 12px rgba(160, 230, 255, 1)); }
+}

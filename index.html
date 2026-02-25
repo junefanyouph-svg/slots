@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gates of Olympus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── Loading Screen ──────────────────────────────────────── -->
+<div id="loadingScreen">
+  <div class="load-stars" id="loadStars"></div>
+  <div class="load-zeus">⚡</div>
+  <div class="load-logo">GATES OF OLYMPUS</div>
+  <div class="load-subtitle">WHERE LEGENDS ARE FORGED</div>
+  <div class="load-bar-wrap">
+    <div class="load-bar-fill" id="loadBar"></div>
+  </div>
+  <div class="load-pct" id="loadPct">0%</div>
+  <div class="load-tip" id="loadTip">Summoning the gods of Olympus...</div>
+</div>
+
+<!-- ── Main Menu ───────────────────────────────────────────── -->
+<div id="mainMenu" class="hidden">
+  <div class="menu-bg"></div>
+  <div class="pillar left"></div>
+  <div class="pillar right"></div>
+  <div class="menu-ground"></div>
+  <div class="menu-lightning-l">⚡</div>
+  <div class="menu-lightning-r">⚡</div>
+  <div class="menu-content">
+    <div class="menu-zeus">🏛️</div>
+    <div class="menu-title">GATES OF OLYMPUS</div>
+    <div class="menu-tagline">Claim your divine fortune</div>
+    <div class="menu-divider"></div>
+    <div class="menu-info-row">
+      <span class="menu-badge">🪖 Scatter = 4 Helmets</span>
+      <span class="menu-badge">💰 Cluster 12+ to Win</span>
+      <span class="menu-badge">⚡ 10 Free Spins</span>
+    </div>
+    <button class="menu-play-btn" onclick="startGame()">⚡ PLAY NOW ⚡</button>
+    <div class="menu-info-row">
+      <span class="menu-badge" style="font-size:10px;opacity:.6">Starting Balance: $5,000</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Game Root ────────────────────────────────────────────── -->
+<div id="gameRoot" class="hidden">
+
+  <!-- Background clouds -->
+  <div class="clouds">
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+  </div>
+
+  <!-- Win announcement banner -->
+  <div class="win-message" id="winMessage">
+    <div class="win-text" id="winText"></div>
+  </div>
+
+  <!-- Particle container -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Free spins intro overlay -->
+  <div class="fs-overlay" id="fsIntroOverlay">
+    <div class="fs-intro-box">
+      <div class="fs-helmet-anim">🪖</div>
+      <div class="fs-intro-title">FREE SPINS</div>
+      <div class="fs-intro-sub">HERMES GRANTS YOU</div>
+      <div class="fs-intro-count">10</div>
+      <div class="fs-intro-sub">FREE SPINS!</div>
+      <div class="fs-lightning">⚡ ⚡ ⚡</div>
+    </div>
+  </div>
+
+  <!-- Free spins summary overlay -->
+  <div class="fs-overlay" id="fsSummaryOverlay">
+    <div class="fs-intro-box">
+      <div class="fs-intro-title" style="font-size:clamp(18px,3.5vw,30px)">FREE SPINS COMPLETE!</div>
+      <div class="fs-intro-sub" style="margin:8px 0">TOTAL WINNINGS</div>
+      <div class="fs-intro-count" id="fsSummaryWin" style="font-size:clamp(28px,6vw,60px)">$0.00</div>
+      <div class="fs-lightning">🏆 🏆 🏆</div>
+    </div>
+  </div>
+
+  <!-- Free spins HUD (shown during free spin sequence) -->
+  <div class="fs-hud" id="freeSpinHUD" style="display:none">
+    <span class="fs-hud-label">FREE SPINS</span>
+    <span class="fs-hud-count" id="fsCount">10</span>
+  </div>
+
+  <!-- Paytable modal -->
+  <div class="paytable" id="paytable">
+    <div class="paytable-inner">
+      <h2>⚡ Paytable</h2>
+      <div class="pay-row"><span>👁️</span><span>Eye of Zeus</span>    <span>×50 bet</span></div>
+      <div class="pay-row"><span>🗡️</span><span>Lightning Sword</span> <span>×20 bet</span></div>
+      <div class="pay-row"><span>🏺</span><span>Golden Urn</span>       <span>×10 bet</span></div>
+      <div class="pay-row"><span>💎</span><span>Sapphire Gem</span>     <span>×5 bet</span></div>
+      <div class="pay-row"><span>🔮</span><span>Crystal Ball</span>     <span>×3 bet</span></div>
+      <div class="pay-row"><span>🪖</span><span>Hermes Helmet (Scatter)</span><span>4 = 10 Free Spins</span></div>
+      <div style="margin-top:12px;color:rgba(255,255,255,.6);font-size:12px">
+        Match <strong style="color:var(--gold)">12 or more</strong> of the same symbol anywhere to win!
+      </div>
+      <button class="close-btn" onclick="document.getElementById('paytable').classList.remove('open')">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- Main game area -->
+  <div class="game-wrapper">
+    <div class="title-banner">GATES OF OLYMPUS</div>
+
+    <div class="top-row">
+      <button class="info-btn" onclick="document.getElementById('paytable').classList.add('open')">i</button>
+      <div class="balance-pill">
+        <span class="lbl">BALANCE</span>
+        <span id="balanceDisplay">$5000.00</span>
+      </div>
+      <button class="buy-fs-btn" id="buyFsBtn" onclick="openBuyModal()">🪙 BUY SPINS</button>
+    </div>
+
+    <div class="temple-frame">
+      <div class="reel-grid" id="grid"></div>
+    </div>
+
+    <div class="info-bar">
+      <div class="info-box">
+        <div class="info-label">Total Win</div>
+        <div class="info-value total-win" id="winDisplay">$0.00</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-bet" onclick="changeBet(-5)">−</button>
+      <div class="bet-display">BET: $<span id="betDisplay">10</span></div>
+      <button class="btn btn-bet" onclick="changeBet(5)">+</button>
+      <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN ⚡</button>
+    </div>
+  </div>
+
+  <!-- Buy free spins modal -->
+  <div class="buy-modal-overlay" id="buyModal">
+    <div class="buy-modal">
+      <div class="buy-modal-header">
+        <span class="buy-modal-icon">🪙</span>
+        <h2 class="buy-modal-title">BUY FREE SPINS</h2>
+        <p class="buy-modal-sub">Summon Hermes — skip the wait</p>
+      </div>
+      <div class="buy-single-pkg">
+        <div class="bsp-helmet">🪖</div>
+        <div class="bsp-spins">10</div>
+        <div class="bsp-label">FREE SPINS</div>
+        <div class="bsp-divider"></div>
+        <div class="bsp-cost-row">
+          <span class="bsp-cost-label">COST</span>
+          <span class="bsp-cost-value" id="buyModalCost">$100</span>
+        </div>
+        <div class="bsp-formula" id="buyModalFormula">100× current bet ($10)</div>
+      </div>
+      <button class="buy-confirm-purchase-btn" id="buyPurchaseBtn" onclick="purchaseFreeSpin()">
+        ⚡ CONFIRM PURCHASE ⚡
+      </button>
+      <div class="buy-modal-footer">
+        <button class="buy-cancel-btn" onclick="closeBuyModal()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buy confirm flash overlay -->
+  <div class="buy-confirm-overlay" id="buyConfirmOverlay">
+    <div class="buy-confirm-box">
+      <div class="buy-confirm-icon"  id="buyConfirmIcon">🪖</div>
+      <div class="buy-confirm-title" id="buyConfirmTitle">FREE SPINS PURCHASED!</div>
+      <div class="buy-confirm-sub"   id="buyConfirmSub">10 Free Spins Activated</div>
+      <div class="buy-confirm-cost"  id="buyConfirmCost">-$100</div>
+    </div>
+  </div>
+
+</div><!-- /#gameRoot -->
+
+<!-- ── Scripts (load order matters) ────────────────────────── -->
+<script src="config.js"></script>   <!-- Constants & shared state  -->
+<script src="reel.js"></script>     <!-- Grid build & spin animation -->
+<script src="evaluate.js"></script> <!-- Win detection & highlights  -->
+<script src="game.js"></script>     <!-- Spin flow, free spins, buy  -->
+<script src="ui.js"></script>       <!-- UI helpers, loading screen  -->
+
+<script>
+  // Kick off the loading screen as soon as all scripts are ready
+  runLoadingScreen();
+</script>
+
+</body>
+</html>

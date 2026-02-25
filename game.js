@@ -1,0 +1,157 @@
+// =============================================================
+//  game.js — Core spin flow, free spins, and buy feature
+// =============================================================
+
+// ── Spin flow ─────────────────────────────────────────────────
+
+/**
+ * Runs a full spin cycle: generates finals, animates all columns,
+ * then evaluates the result.
+ *
+ * Every 20 spins a win is forced (nudge) to maintain ~5%+ win rate.
+ *
+ * @param {boolean} isFree - true when called during free spins
+ * @returns {boolean}      - true if free spins were triggered
+ */
+async function runSpin(isFree = false) {
+  $('winDisplay').textContent = '$0.00';
+  clearWins();
+  spinCount++;
+
+  // Generate the finals grid
+  let finals = Array.from({ length: ROWS }, () =>
+    Array.from({ length: COLS }, randSym)
+  );
+
+  // Forced win nudge every 20 spins
+  const forceWin = !isFree && spinCount % 20 === 0;
+  if (forceWin) {
+    const sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+    let placed = 0;
+    for (let r = 0; r < ROWS && placed < WIN_THRESH; r++)
+      for (let c = 0; c < COLS && placed < WIN_THRESH; c++)
+        if (Math.random() < 0.7) { finals[r][c] = sym; placed++; }
+  }
+
+  // Animate all columns (staggered start)
+  const BASE = isFree ? 650 : 900;
+  await Promise.all(
+    Array.from({ length: COLS }, (_, c) =>
+      delay(c * (isFree ? 55 : 80)).then(() =>
+        rollColumn(c, finals.map(r => r[c]), BASE + c * (isFree ? 80 : 120))
+      )
+    )
+  );
+
+  await delay(isFree ? 80 : 100);
+
+  // Evaluate using the finals grid (not the DOM)
+  return evaluateFinals(finals, isFree);
+}
+
+/**
+ * Handles a single player-initiated spin (base game).
+ */
+async function spin() {
+  if (spinning || balance < bet) return;
+
+  spinning = true;
+  balance -= bet;
+  updateBalance();
+  $('spinBtn').disabled = true;
+
+  const triggered = await runSpin(false);
+  spinning = false;
+
+  if (triggered) await startFreeSpins();
+  else $('spinBtn').disabled = false;
+}
+
+
+// ── Free spins ────────────────────────────────────────────────
+
+/**
+ * Runs the free spins sequence from start to summary.
+ */
+async function startFreeSpins() {
+  inFreeSpins      = true;
+  freeSpinTotalWin = 0;
+
+  await showOverlay('fsIntroOverlay', 3200, true);
+  document.body.classList.add('freespin-mode');
+
+  const hud = $('freeSpinHUD');
+  hud.style.display = 'flex';
+
+  while (freeSpins > 0) {
+    freeSpins--;
+    $('fsCount').textContent = freeSpins;
+    await runSpin(true);
+    await delay(600);
+  }
+
+  document.body.classList.remove('freespin-mode');
+  hud.style.display = 'none';
+
+  $('fsSummaryWin').textContent = '$' + freeSpinTotalWin.toFixed(2);
+  await showOverlay('fsSummaryOverlay', 3000, true);
+
+  inFreeSpins = false;
+  $('spinBtn').disabled = false;
+  updateBalance();
+}
+
+
+// ── Buy feature ───────────────────────────────────────────────
+
+function openBuyModal() {
+  if (spinning) return;
+  const cost = bet * FS_MULT;
+  $('buyModalCost').textContent    = '$' + cost;
+  $('buyModalFormula').textContent = `${FS_MULT}× current bet ($${bet})`;
+  $('buyPurchaseBtn').disabled     = balance < cost;
+  $('buyModal').classList.add('open');
+}
+
+function closeBuyModal() {
+  $('buyModal').classList.remove('open');
+}
+
+async function purchaseFreeSpin() {
+  const cost = bet * FS_MULT;
+
+  if (balance < cost) {
+    const m = $('buyModal');
+    m.style.cssText += 'border-color:#f44;box-shadow:0 0 30px rgba(255,60,60,.4)';
+    if (!m.querySelector('.ins-msg')) {
+      const d = Object.assign(document.createElement('div'), {
+        className:   'ins-msg',
+        textContent: '⚠️ INSUFFICIENT BALANCE',
+      });
+      Object.assign(d.style, {
+        color: '#f66', fontFamily: 'Cinzel,serif', fontSize: '12px',
+        textAlign: 'center', letterSpacing: '2px', marginBottom: '8px',
+      });
+      m.querySelector('.buy-modal-footer').before(d);
+      setTimeout(() => {
+        d.remove();
+        m.style.borderColor = '';
+        m.style.boxShadow   = '';
+      }, 2000);
+    }
+    return;
+  }
+
+  closeBuyModal();
+  balance  -= cost;
+  freeSpins = 10;
+  updateBalance();
+
+  $('buyConfirmIcon').textContent  = '🪖';
+  $('buyConfirmTitle').textContent = 'SPINS PURCHASED!';
+  $('buyConfirmSub').textContent   = '10 Free Spins Activated';
+  $('buyConfirmCost').textContent  = '-$' + cost;
+
+  await showOverlay('buyConfirmOverlay', 2200, true);
+  await startFreeSpins();
+}
