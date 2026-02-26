@@ -498,7 +498,6 @@ body.freespin-mode .title-banner {
 
 /* ── 7. Win Highlights ────────────────────────────────────── */
 .reel-tile.winner {
-  position: relative;
   border-radius: 6px;
   z-index: 2;
   animation: winGlow .7s ease-in-out infinite alternate;
@@ -901,31 +900,155 @@ body.freespin-mode .title-banner {
   background: linear-gradient(180deg, #1b2d6b, #0d1a4a);
   border: 2px solid var(--gold);
   border-radius: 12px;
-  padding: 24px 32px;
-  max-width: 480px;
-  width: 90vw;
+  padding: 24px 28px;
+  max-width: 620px;
+  width: 94vw;
+  max-height: 88vh;
+  overflow-y: auto;
   text-align: center;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold2) rgba(10, 20, 60, 0.8);
+}
+
+.paytable-inner::-webkit-scrollbar {
+  width: 6px;
+}
+
+.paytable-inner::-webkit-scrollbar-track {
+  background: rgba(10, 20, 60, 0.8);
+  border-radius: 10px;
+}
+
+.paytable-inner::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold2), #c8860a);
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(255, 200, 0, 0.5);
+}
+
+.paytable-inner::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #fff8a0, var(--gold2));
+  box-shadow: 0 0 10px rgba(255, 200, 0, 0.8);
 }
 
 .paytable-inner h2 {
   font-family: 'Cinzel Decorative', cursive;
   color: var(--gold2);
-  margin-bottom: 16px;
-  font-size: 22px;
+  margin-bottom: 6px;
+  font-size: 20px;
 }
 
-.pay-row {
+.pay-subtitle {
+  font-size: 11px;
+  color: rgba(230, 210, 150, .55);
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+}
+
+/* Scatter section */
+.pay-scatter-grid {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 0;
+  background: rgba(255,200,0,.05);
+  border: 1px solid rgba(255,200,0,.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.pay-scatter-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(245, 200, 66, .1);
-  font-size: 14px;
-  color: var(--marble);
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255,200,0,.08);
+  border-bottom: 1px solid rgba(255,200,0,.15);
+  grid-column: 1 / -1;
 }
 
-.pay-row span:first-child { font-size: 22px; width: 30px; }
-.pay-row span:last-child  { margin-left: auto; color: var(--gold); }
+.pay-scatter-header .pay-sym  { font-size: 22px; }
+.pay-scatter-header .pay-name { font-family: 'Cinzel',serif; font-size: 13px; color: var(--gold2); letter-spacing: 1px; }
+
+.pay-scatter-col-head {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(230,210,150,.5);
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255,200,0,.1);
+  text-transform: uppercase;
+}
+
+.pay-scatter-row {
+  display: contents;
+}
+
+.pay-scatter-cell {
+  padding: 7px 10px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,200,0,.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pay-scatter-cell.count { color: rgba(230,210,150,.7); font-size: 12px; }
+.pay-scatter-cell.prize { color: var(--gold2); font-weight: 600; }
+.pay-scatter-cell.spins { color: #7dd3fc; font-size: 12px; }
+
+/* Fruit grid */
+.pay-fruits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pay-fruit-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(245,200,66,.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pay-fruit-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(245,200,66,.07);
+  border-bottom: 1px solid rgba(245,200,66,.12);
+}
+
+.pay-fruit-header .pay-sym  { font-size: 20px; line-height: 1; }
+.pay-fruit-header .pay-name { font-family: 'Cinzel',serif; font-size: 11px; color: var(--gold); letter-spacing: 1px; }
+
+.pay-fruit-tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.pay-tier-head {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba(230,210,150,.4);
+  padding: 4px 10px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.pay-tier-row {
+  display: contents;
+}
+
+.pay-tier-cell {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  display: flex;
+  align-items: center;
+}
+
+.pay-tier-cell.count { color: rgba(200,180,130,.65); font-size: 11px; }
+.pay-tier-cell.prize { color: var(--gold2); font-weight: 600; justify-content: flex-end; }
 
 .close-btn {
   margin-top: 16px;

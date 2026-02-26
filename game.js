@@ -14,7 +14,6 @@
  * @returns {boolean}      - true if free spins were triggered
  */
 async function runSpin(isFree = false) {
-  $('winDisplay').textContent = '$0.00';
   clearWins();
   spinCount++;
 
@@ -30,7 +29,9 @@ async function runSpin(isFree = false) {
   //   🏺 Golden Urn      —  9%  (uncommon)
   //   🗡️ Lightning Sword —  4%  (rare)
   //   👁️ Eye of Zeus     —  2%  (very rare, highest payout)
-  const FORCED_WIN_WEIGHTS = [2, 4, 9, 45, 40]; // maps to SYMBOLS order
+  // Weights for 9 fruit symbols (index matches SYMBOLS order)
+  // Low-value fruits more likely; high-value (🍋 fruit3, 🍉 fruit7) much rarer
+  const FORCED_WIN_WEIGHTS = [15, 20, 2, 18, 20, 25, 3, 15, 22]; // maps to SYMBOLS
   const forceWin = !isFree && spinCount % 20 === 0;
   if (forceWin) {
     const tot = FORCED_WIN_WEIGHTS.reduce((a, b) => a + b, 0);
@@ -41,9 +42,10 @@ async function runSpin(isFree = false) {
       if (pick <= 0) { forcedSym = SYMBOLS[i]; break; }
     }
     let placed = 0;
-    for (let r = 0; r < ROWS && placed < WIN_THRESH; r++)
+    for (let r = 0; r < ROWS && placed < WIN_THRESH; r++)  // WIN_THRESH = 8
       for (let c = 0; c < COLS && placed < WIN_THRESH; c++)
         if (Math.random() < 0.7) { finals[r][c] = forcedSym; placed++; }
+    // Note: WIN_THRESH is now 8, so we only need 8 placements minimum
   }
 
   // Animate all columns (staggered start)
@@ -70,6 +72,8 @@ async function spin() {
 
   spinning = true;
   balance -= bet;
+  sessionWin = 0;
+  $('winDisplay').textContent = '$0.00';
   updateBalance();
   $('spinBtn').disabled = true;
 
@@ -90,6 +94,7 @@ async function startFreeSpins() {
   inFreeSpins      = true;
   freeSpinTotalWin = 0;
 
+  $('fsIntroCount').textContent = freeSpins;  // show actual awarded count
   await showOverlay('fsIntroOverlay', 3200, true);
   document.body.classList.add('freespin-mode');
 
@@ -100,6 +105,8 @@ async function startFreeSpins() {
     freeSpins--;
     $('fsCount').textContent = freeSpins;
     await runSpin(true);
+    // If scatters added more spins during this spin, the HUD will reflect it next iteration
+    $('fsCount').textContent = freeSpins;
     await delay(600);
   }
 

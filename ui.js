@@ -28,12 +28,15 @@ function changeBet(delta) {
 
 // ── Win message ───────────────────────────────────────────────
 
-function showWin(amount, isScatter) {
-  $('winText').textContent = isScatter
-    ? '🪖 HERMES BLESSES YOU! 10 FREE SPINS! 🪖'
-    : amount >= bet * 20 ? `🏆 MEGA WIN! $${amount.toFixed(0)}`
-    : amount >= bet * 10 ? `✨ BIG WIN! $${amount.toFixed(0)}`
-    :                      `💰 WIN! $${amount.toFixed(0)}`;
+function showWin(amount, isScatter, freeSpinsAwarded = 0) {
+  if (isScatter) {
+    const cashPart = amount > 0 ? ` +$${amount.toFixed(2)}` : '';
+    $('winText').textContent = `⭐ ${freeSpinsAwarded} FREE SPINS!${cashPart} ⭐`;
+  } else {
+    $('winText').textContent = amount >= 50  ? `🏆 MEGA WIN! $${amount.toFixed(2)}`
+                             : amount >= 20  ? `✨ BIG WIN! $${amount.toFixed(2)}`
+                             :                 `💰 WIN! $${amount.toFixed(2)}`;
+  }
 
   const m = $('winMessage');
   m.classList.add('show');
@@ -105,11 +108,11 @@ async function runLoadingScreen() {
   const pct  = $('loadPct');
   const tip  = $('loadTip');
   const tips = [
-    'Summoning the gods...',
-    'Polishing thunderbolts...',
-    'Counting helmets...',
-    'Forging golden symbols...',
-    'Consulting the Oracle...',
+    'Harvesting fruits...',
+    'Polishing the reels...',
+    'Counting cherries...',
+    'Ripening the jackpot...',
+    'Squeezing the lemons...',
     'Preparing your fortune...',
   ];
   let ti = 0;

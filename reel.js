@@ -9,7 +9,7 @@
  * SCATTER has its own tiny flat probability (0.4%).
  */
 function randSym() {
-  if (Math.random() < 0.004) return SCATTER;
+  if (Math.random() < 0.04) return SCATTER;  // ~4% per cell → P(≥3 scatters) ≈ 4.7%
   const tot = WEIGHTS.reduce((a, b) => a + b, 0);
   let r = Math.random() * tot;
   for (let i = 0; i < SYMBOLS.length; i++) {
@@ -46,8 +46,7 @@ function buildGrid() {
       const t = document.createElement('div');
       t.className  = 'reel-tile';
       t.textContent = randSym();
-      t.style.height = tileH + 'px';
-      t.style.top    = (r * tileH) + 'px';
+      t.style.cssText = `height:${tileH}px;position:absolute;left:0;right:0;top:${r * tileH}px;`;
       col.appendChild(t);
       tiles.push(t);
     }
@@ -146,9 +145,10 @@ async function rollColumn(c, finals, dur) {
   });
 
   // Snap finals into permanent tiles and remove the strip
+  // Re-apply full inline style to guarantee position:absolute is never lost
   finals.forEach((s, r) => {
-    tiles[r].textContent = s;
-    tiles[r].style.top   = (r * tileH) + 'px';
+    tiles[r].textContent = s || '?';
+    tiles[r].style.cssText = `height:${tileH}px;position:absolute;left:0;right:0;top:${r * tileH}px;`;
   });
   tiles.forEach(t => t.style.visibility = '');
   col.removeChild(strip);
@@ -168,7 +168,7 @@ async function rollColumn(c, finals, dur) {
         requestAnimationFrame(tick);
       } else {
         tiles.forEach((t, r) => { t.style.top = (r * tileH) + 'px'; });
-        resolve();
+        resolve();  // cssText already set correctly in snap step above
       }
     }
 

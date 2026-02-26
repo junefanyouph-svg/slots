@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gates of Olympus</title>
+  <title>Fruit Frenzy Slots</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,14 +12,14 @@
 <!-- ── Loading Screen ──────────────────────────────────────── -->
 <div id="loadingScreen">
   <div class="load-stars" id="loadStars"></div>
-  <div class="load-zeus">⚡</div>
-  <div class="load-logo">GATES OF OLYMPUS</div>
-  <div class="load-subtitle">WHERE LEGENDS ARE FORGED</div>
+  <div class="load-zeus">🍒</div>
+  <div class="load-logo">FRUIT FRENZY</div>
+  <div class="load-subtitle">SPIN THE SWEETEST WINS</div>
   <div class="load-bar-wrap">
     <div class="load-bar-fill" id="loadBar"></div>
   </div>
   <div class="load-pct" id="loadPct">0%</div>
-  <div class="load-tip" id="loadTip">Summoning the gods of Olympus...</div>
+  <div class="load-tip" id="loadTip">Ripening the reels...</div>
 </div>
 
 <!-- ── Main Menu ───────────────────────────────────────────── -->
@@ -28,19 +28,19 @@
   <div class="pillar left"></div>
   <div class="pillar right"></div>
   <div class="menu-ground"></div>
-  <div class="menu-lightning-l">⚡</div>
-  <div class="menu-lightning-r">⚡</div>
+  <div class="menu-lightning-l">🍋</div>
+  <div class="menu-lightning-r">🍋</div>
   <div class="menu-content">
-    <div class="menu-zeus">🏛️</div>
-    <div class="menu-title">GATES OF OLYMPUS</div>
-    <div class="menu-tagline">Claim your divine fortune</div>
+    <div class="menu-zeus">🍒</div>
+    <div class="menu-title">FRUIT FRENZY</div>
+    <div class="menu-tagline">Pick your sweetest fortune</div>
     <div class="menu-divider"></div>
     <div class="menu-info-row">
-      <span class="menu-badge">🪖 Scatter = 4 Helmets</span>
-      <span class="menu-badge">💰 Cluster 12+ to Win</span>
-      <span class="menu-badge">⚡ 10 Free Spins</span>
+      <span class="menu-badge">⭐ 3+ Scatters = Free Spins</span>
+      <span class="menu-badge">🍒 Cluster 8+ to Win</span>
+      <span class="menu-badge">🎰 9 Fruit Symbols</span>
     </div>
-    <button class="menu-play-btn" onclick="startGame()">⚡ PLAY NOW ⚡</button>
+    <button class="menu-play-btn" onclick="startGame()">🍒 PLAY NOW 🍒</button>
     <div class="menu-info-row">
       <span class="menu-badge" style="font-size:10px;opacity:.6">Starting Balance: $5,000</span>
     </div>
@@ -68,12 +68,12 @@
   <!-- Free spins intro overlay -->
   <div class="fs-overlay" id="fsIntroOverlay">
     <div class="fs-intro-box">
-      <div class="fs-helmet-anim">🪖</div>
+      <div class="fs-helmet-anim">⭐</div>
       <div class="fs-intro-title">FREE SPINS</div>
-      <div class="fs-intro-sub">HERMES GRANTS YOU</div>
-      <div class="fs-intro-count">10</div>
+      <div class="fs-intro-sub">YOU TRIGGERED</div>
+      <div class="fs-intro-count" id="fsIntroCount">10</div>
       <div class="fs-intro-sub">FREE SPINS!</div>
-      <div class="fs-lightning">⚡ ⚡ ⚡</div>
+      <div class="fs-lightning">⭐ 🍒 ⭐</div>
     </div>
   </div>
 
@@ -96,23 +96,147 @@
   <!-- Paytable modal -->
   <div class="paytable" id="paytable">
     <div class="paytable-inner">
-      <h2>⚡ Paytable</h2>
-      <div class="pay-row"><span>👁️</span><span>Eye of Zeus</span>    <span>×50 bet</span></div>
-      <div class="pay-row"><span>🗡️</span><span>Lightning Sword</span> <span>×20 bet</span></div>
-      <div class="pay-row"><span>🏺</span><span>Golden Urn</span>       <span>×10 bet</span></div>
-      <div class="pay-row"><span>💎</span><span>Sapphire Gem</span>     <span>×5 bet</span></div>
-      <div class="pay-row"><span>🔮</span><span>Crystal Ball</span>     <span>×3 bet</span></div>
-      <div class="pay-row"><span>🪖</span><span>Hermes Helmet (Scatter)</span><span>4 = 10 Free Spins</span></div>
-      <div style="margin-top:12px;color:rgba(255,255,255,.6);font-size:12px">
-        Match <strong style="color:var(--gold)">12 or more</strong> of the same symbol anywhere to win!
+      <h2>🍒 Paytable</h2>
+      <div class="pay-subtitle">ALL PRIZES MULTIPLY YOUR BET</div>
+
+      <!-- Scatter -->
+      <div class="pay-scatter-grid">
+        <div class="pay-scatter-header">
+          <span class="pay-sym">⭐</span>
+          <span class="pay-name">SCATTER</span>
+        </div>
+        <div class="pay-scatter-col-head">COUNT</div>
+        <div class="pay-scatter-col-head">PRIZE</div>
+        <div class="pay-scatter-col-head">FREE SPINS</div>
+
+        <div class="pay-scatter-cell count">×3</div>
+        <div class="pay-scatter-cell prize">—</div>
+        <div class="pay-scatter-cell spins">5 spins</div>
+
+        <div class="pay-scatter-cell count">×4</div>
+        <div class="pay-scatter-cell prize">3×</div>
+        <div class="pay-scatter-cell spins">15 spins</div>
+
+        <div class="pay-scatter-cell count">×5</div>
+        <div class="pay-scatter-cell prize">5×</div>
+        <div class="pay-scatter-cell spins">15 spins</div>
+
+        <div class="pay-scatter-cell count">×6+</div>
+        <div class="pay-scatter-cell prize">100×</div>
+        <div class="pay-scatter-cell spins">15 spins</div>
       </div>
+
+      <!-- Fruit cards -->
+      <div class="pay-fruits-grid">
+
+        <!-- 🍇 Grapes -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍇</span><span class="pay-name">GRAPES</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">2×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">5×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">15×</div>
+          </div>
+        </div>
+
+        <!-- 🍊 Orange -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍊</span><span class="pay-name">ORANGE</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">0.8×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">1.2×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">8×</div>
+          </div>
+        </div>
+
+        <!-- 🍋 Lemon -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍋</span><span class="pay-name">LEMON</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">10×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">25×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">50×</div>
+          </div>
+        </div>
+
+        <!-- 🍎 Apple -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍎</span><span class="pay-name">APPLE</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">1.5×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">2×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">12×</div>
+          </div>
+        </div>
+
+        <!-- 🍓 Strawberry -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍓</span><span class="pay-name">STRAWBERRY</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">0.5×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">1×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">5×</div>
+          </div>
+        </div>
+
+        <!-- 🍒 Cherry -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍒</span><span class="pay-name">CHERRY</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">0.2×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">0.7×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">2×</div>
+          </div>
+        </div>
+
+        <!-- 🍉 Watermelon -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍉</span><span class="pay-name">WATERMELON</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">2.5×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">10×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">25×</div>
+          </div>
+        </div>
+
+        <!-- 🍑 Peach -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍑</span><span class="pay-name">PEACH</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">1×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">1.5×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">25×</div>
+          </div>
+        </div>
+
+        <!-- 🍍 Pineapple -->
+        <div class="pay-fruit-card">
+          <div class="pay-fruit-header"><span class="pay-sym">🍍</span><span class="pay-name">PINEAPPLE</span></div>
+          <div class="pay-fruit-tiers">
+            <div class="pay-tier-head">COUNT</div><div class="pay-tier-head" style="text-align:right">WIN</div>
+            <div class="pay-tier-cell count">8 – 9</div><div class="pay-tier-cell prize">0.4×</div>
+            <div class="pay-tier-cell count">10 – 11</div><div class="pay-tier-cell prize">0.9×</div>
+            <div class="pay-tier-cell count">12+</div><div class="pay-tier-cell prize">4×</div>
+          </div>
+        </div>
+
+      </div><!-- /.pay-fruits-grid -->
+
       <button class="close-btn" onclick="document.getElementById('paytable').classList.remove('open')">CLOSE</button>
     </div>
   </div>
 
   <!-- Main game area -->
   <div class="game-wrapper">
-    <div class="title-banner">GATES OF OLYMPUS</div>
+    <div class="title-banner">FRUIT FRENZY</div>
 
     <div class="top-row">
       <button class="info-btn" onclick="document.getElementById('paytable').classList.add('open')">i</button>
@@ -138,7 +262,7 @@
       <button class="btn btn-bet" onclick="changeBet(-5)">−</button>
       <div class="bet-display">BET: $<span id="betDisplay">10</span></div>
       <button class="btn btn-bet" onclick="changeBet(5)">+</button>
-      <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN ⚡</button>
+      <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN 🍒</button>
     </div>
   </div>
 
@@ -148,10 +272,10 @@
       <div class="buy-modal-header">
         <span class="buy-modal-icon">🪙</span>
         <h2 class="buy-modal-title">BUY FREE SPINS</h2>
-        <p class="buy-modal-sub">Summon Hermes — skip the wait</p>
+        <p class="buy-modal-sub">Skip the wait — buy free spins</p>
       </div>
       <div class="buy-single-pkg">
-        <div class="bsp-helmet">🪖</div>
+        <div class="bsp-helmet">⭐</div>
         <div class="bsp-spins">10</div>
         <div class="bsp-label">FREE SPINS</div>
         <div class="bsp-divider"></div>

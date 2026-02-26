@@ -2,12 +2,26 @@
 //  evaluate.js — Win detection and tile highlighting
 // =============================================================
 
+/** Returns the bet multiplier for a fruit symbol at a given count. Multiply by bet for actual payout. */
+function getPayout(sym, count) {
+  const tiers = PAYOUTS[sym];
+  if (!tiers) return 0;
+  for (let i = tiers.length - 1; i >= 0; i--)
+    if (count >= tiers[i][0]) return tiers[i][1];
+  return 0;
+}
+
+/** Returns [cash, freeSpins] for a given scatter count. */
+function getScatterPayout(count) {
+  if (count >= 6) return SCATTER_PAYOUT_6PLUS;
+  return SCATTER_PAYOUTS[count] || [0, 0];
+}
+
 /**
  * Evaluates a completed spin against the finals grid.
- *
- * @param {string[][]} finals  - finals[row][col] symbol strings
- * @param {boolean}    isFree  - true during free spins (scatters don't re-trigger)
- * @returns {boolean}          - true if free spins were triggered
+ * @param {string[][]} finals
+ * @param {boolean}    isFree
+ * @returns {boolean} true if free spins intro should play
  */
 function evaluateFinals(finals, isFree = false) {
   const getTile = (r, c) => reelCols[c]?.tiles[r];
@@ -22,33 +36,31 @@ function evaluateFinals(finals, isFree = false) {
     for (let c = 0; c < COLS; c++)
       if (getSym(r, c) === SCATTER) scatters++;
 
-  // Check each paying symbol for a cluster of WIN_THRESH or more
+  // Fruit wins — 8+ cluster pays fixed $
   for (const sym of SYMBOLS) {
     const matches = [];
-
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
         if (getSym(r, c) === sym) matches.push([r, c]);
 
-    if (matches.length >= WIN_THRESH) {
-      totalWin += bet * getMult(sym, matches.length);
-
-      // Highlight winning tiles
+    const payout = getPayout(sym, matches.length) * bet;
+    if (payout > 0) {
+      totalWin += payout;
       matches.forEach(([r, c]) => {
         const tile = getTile(r, c);
-        if (tile) {
-          tile.classList.add('winner');
-          tile.dataset.count = matches.length;
-          tile.dataset.sym   = sym;
-        }
+        if (tile) { tile.classList.add('winner'); tile.dataset.sym = sym; }
       });
     }
   }
 
-  // Scatter trigger (exactly 4, only in base game)
-  if (scatters === 4 && !isFree) {
-    freeSpins += 10;
-    triggered  = true;
+  // Scatter trigger — P(>=3) = sum C(6,k)*p^k*(1-p)^(6-k), k=3..6
+  // Re-triggers during free spins, adding to remaining count.
+  if (scatters >= 3) {
+    const [cashPrize, awarded] = getScatterPayout(scatters);
+    freeSpins += awarded;
+    triggered  = !isFree;  // intro overlay only in base game
+    const cashPrizeAmt = cashPrize * bet;
+    if (cashPrizeAmt > 0) totalWin += cashPrizeAmt;
 
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
@@ -57,16 +69,17 @@ function evaluateFinals(finals, isFree = false) {
           if (tile) tile.classList.add('scatter-tile');
         }
 
-    showWin(0, true);
+    showWin(cashPrizeAmt, true, awarded);
   }
 
-  // Apply win
+  // Apply total win
   if (totalWin > 0) {
     $('grid').classList.add('has-winners');
     balance += totalWin;
     if (isFree) freeSpinTotalWin += totalWin;
     updateBalance();
-    $('winDisplay').textContent = '$' + totalWin.toFixed(2);
+    sessionWin += totalWin;
+    $('winDisplay').textContent = '$' + sessionWin.toFixed(2);
     if (!triggered) showWin(totalWin, false);
     spawnParticles();
   }
@@ -74,24 +87,7 @@ function evaluateFinals(finals, isFree = false) {
   return triggered;
 }
 
-/**
- * Returns the payout multiplier for a symbol at a given cluster size.
- * Base value × cluster-size bonus.
- */
-function getMult(sym, count) {
-  const base  = [50, 20, 10, 5, 3][SYMBOLS.indexOf(sym)] || 2;
-  const bonus = count >= 25 ? 10
-              : count >= 20 ?  7
-              : count >= 16 ?  5
-              : count >= 14 ?  3
-              : count >= 12 ?  2
-              :                1;
-  return base * bonus;
-}
-
-/**
- * Removes all win highlights from every visible tile.
- */
+/** Removes all win highlights from every visible tile. */
 function clearWins() {
   $('grid').classList.remove('has-winners');
   reelCols.forEach(({ tiles }) => tiles.forEach(t => {
