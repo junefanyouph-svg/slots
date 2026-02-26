@@ -94,8 +94,9 @@
   </div>
 
   <!-- Paytable modal -->
-  <div class="paytable" id="paytable">
+  <div class="paytable" id="paytable" onclick="if(event.target===this)this.classList.remove('open')">
     <div class="paytable-inner">
+      <button class="paytable-close-x" onclick="document.getElementById('paytable').classList.remove('open')">✕</button>
       <h2>🍒 Paytable</h2>
       <div class="pay-subtitle">ALL PRIZES MULTIPLY YOUR BET</div>
 

@@ -1050,6 +1050,33 @@ body.freespin-mode .title-banner {
 .pay-tier-cell.count { color: rgba(200,180,130,.65); font-size: 11px; }
 .pay-tier-cell.prize { color: var(--gold2); font-weight: 600; justify-content: flex-end; }
 
+.paytable-close-x {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: 1.5px solid rgba(245, 200, 66, .35);
+  color: var(--gold);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, border-color .15s, color .15s;
+  line-height: 1;
+}
+
+.paytable-close-x:hover {
+  background: rgba(245, 200, 66, .15);
+  border-color: var(--gold2);
+  color: var(--gold2);
+}
+
+.paytable-inner { position: relative; }
+
 .close-btn {
   margin-top: 16px;
   background: linear-gradient(135deg, #c8860a, var(--gold2));
