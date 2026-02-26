@@ -260,9 +260,16 @@
     </div>
 
     <div class="controls">
-      <button class="btn btn-bet" onclick="changeBet(-5)">−</button>
-      <div class="bet-display">BET: $<span id="betDisplay">10</span></div>
-      <button class="btn btn-bet" onclick="changeBet(5)">+</button>
+      <!-- Bet selector popup -->
+      <div class="bet-selector-wrap">
+        <div class="bet-popup" id="betPopup">
+          <div class="bet-popup-label">SELECT BET</div>
+          <div class="bet-popup-options" id="betPopupOptions"></div>
+        </div>
+        <button class="btn btn-bet" id="betDownBtn" onclick="changeBetStep(-1)">−</button>
+        <div class="bet-display" id="betDisplayBtn" onclick="toggleBetPopup()">BET: $<span id="betDisplay">1</span></div>
+        <button class="btn btn-bet" id="betUpBtn" onclick="changeBetStep(1)">+</button>
+      </div>
       <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN 🍒</button>
     </div>
   </div>

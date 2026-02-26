@@ -12,18 +12,114 @@ function updateBalance() {
   }
 }
 
-function changeBet(delta) {
-  if (spinning || inFreeSpins) return;
-  bet = Math.max(5, Math.min(100, bet + delta));
-  $('betDisplay').textContent = bet;
+// ── Bet step ladder ──────────────────────────────────────────
+// Defines the available values at each tier and the steps within each tier.
+const BET_PRESETS = [1, 5, 10, 20, 50, 100];
 
-  // Keep buy modal in sync if it's open
+const BET_STEPS = {
+  1:  [1, 1.5, 2, 2.5, 3, 4, 5],
+  5:  [5, 6, 7, 8, 9, 10],
+  10: [10, 15, 20],
+  20: [20, 25, 30, 35, 40, 45, 50],
+  50: [50, 60, 70, 80, 90, 100],
+  100: [100],
+};
+
+function getCurrentSteps() {
+  // Build a flat, deduplicated, ordered list of all bet values
+  const seen = new Set();
+  return BET_PRESETS.flatMap(p => BET_STEPS[p]).filter(v => {
+    const key = v.toFixed(3);
+    if (seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+
+function findBetIndex(steps) {
+  // Use tolerance for floating point comparison
+  return steps.findIndex(v => Math.abs(v - bet) < 0.001);
+}
+
+function changeBetStep(dir) {
+  if (spinning || inFreeSpins) return;
+  closeBetPopup();
+  const steps = getCurrentSteps();
+  let idx = findBetIndex(steps);
+  if (idx === -1) {
+    // Snap to nearest
+    idx = steps.reduce((best, v, i) =>
+      Math.abs(v - bet) < Math.abs(steps[best] - bet) ? i : best, 0);
+  }
+  const newIdx = idx + dir;
+  if (newIdx >= 0 && newIdx < steps.length) {
+    bet = steps[newIdx];
+  }
+  updateBetDisplay();
+  updateBetButtons();
+}
+
+function selectBet(value) {
+  if (spinning || inFreeSpins) return;
+  bet = value;
+  updateBetDisplay();
+  updateBetButtons();
+  closeBetPopup();
+}
+
+function updateBetButtons() {
+  const steps = getCurrentSteps();
+  const idx = findBetIndex(steps);
+  const atMin = idx <= 0;
+  const atMax = idx >= steps.length - 1;
+  const down = $('betDownBtn');
+  const up   = $('betUpBtn');
+  if (down) { down.disabled = atMin;  down.style.opacity = atMin ? '.35' : ''; }
+  if (up)   { up.disabled   = atMax;  up.style.opacity   = atMax ? '.35' : ''; }
+}
+
+function updateBetDisplay() {
+  $('betDisplay').textContent = bet % 1 === 0 ? bet : bet.toFixed(1);
+  updateBetButtons();
   if ($('buyModal').classList.contains('open')) {
-    $('buyModalCost').textContent    = '$' + bet * FS_MULT;
+    $('buyModalCost').textContent    = '$' + (bet * FS_MULT).toFixed(2);
     $('buyModalFormula').textContent = `${FS_MULT}× current bet ($${bet})`;
     $('buyPurchaseBtn').disabled     = balance < bet * FS_MULT;
   }
 }
+
+function toggleBetPopup() {
+  if (spinning || inFreeSpins) return;
+  const popup = $('betPopup');
+  const isOpen = popup.classList.contains('open');
+  if (isOpen) { closeBetPopup(); return; }
+
+  // Populate preset buttons
+  const opts = $('betPopupOptions');
+  opts.innerHTML = '';
+  BET_PRESETS.forEach(v => {
+    const btn = document.createElement('button');
+    btn.className = 'bet-popup-btn' + (v === Math.floor(bet) || v === bet ? ' active' : '');
+    btn.textContent = '$' + v;
+    btn.onclick = () => selectBet(v);
+    opts.appendChild(btn);
+  });
+  popup.classList.add('open');
+  // Close when clicking outside
+  setTimeout(() => document.addEventListener('click', closeBetPopupOutside), 0);
+}
+
+function closeBetPopup() {
+  $('betPopup').classList.remove('open');
+  document.removeEventListener('click', closeBetPopupOutside);
+}
+
+function closeBetPopupOutside(e) {
+  const wrap = document.querySelector('.bet-selector-wrap');
+  if (!wrap.contains(e.target)) closeBetPopup();
+}
+
+// Legacy alias so buy modal sync still works
+function changeBet(delta) { changeBetStep(delta > 0 ? 1 : -1); }
 
 
 // ── Win message ───────────────────────────────────────────────
@@ -142,6 +238,8 @@ function startGame() {
   $('mainMenu').classList.add('hidden');
   setTimeout(() => {
     $('gameRoot').classList.remove('hidden');
+    updateBetDisplay();
+    updateBetButtons();
     requestAnimationFrame(() => requestAnimationFrame(buildGrid));
   }, 600);
 }

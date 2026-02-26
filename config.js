@@ -40,8 +40,8 @@ const WIN_THRESH = 8;    // Minimum cluster to pay (fruits)
 const FS_MULT    = 100;  // Buy-feature cost = bet × FS_MULT
 
 // ── Mutable game state ────────────────────────────────────────
-let balance         = 5000;
-let bet             = 10;
+let balance         = 100;
+let bet             = 1;
 let spinning        = false;
 let freeSpins       = 0;
 let inFreeSpins     = false;
