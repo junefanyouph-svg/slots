@@ -2,6 +2,27 @@
 //  reel.js — Grid construction and column spin animation
 // =============================================================
 
+// ── Symbol rendering ──────────────────────────────────────────
+
+/**
+ * Sets the visual content of a tile element to the symbol's image.
+ * Falls back to text emoji if no image mapping exists.
+ */
+function setTileSymbol(el, sym) {
+  const src = SYMBOL_IMAGES[sym];
+  if (src) {
+    el.textContent = '';
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = sym;
+    img.className = 'sym-img';
+    el.appendChild(img);
+  } else {
+    el.textContent = sym;
+  }
+}
+
+
 // ── Symbol generation ─────────────────────────────────────────
 
 /**
@@ -9,7 +30,7 @@
  * SCATTER has its own tiny flat probability (0.4%).
  */
 function randSym() {
-  if (Math.random() < 0.04) return SCATTER;  // ~4% per cell → P(≥3 scatters) ≈ 4.7%
+  if (Math.random() < 0.01) return SCATTER;  // ~4% per cell → P(≥3 scatters) ≈ 4.7%
   const tot = WEIGHTS.reduce((a, b) => a + b, 0);
   let r = Math.random() * tot;
   for (let i = 0; i < SYMBOLS.length; i++) {
@@ -45,8 +66,8 @@ function buildGrid() {
     for (let r = 0; r < ROWS; r++) {
       const t = document.createElement('div');
       t.className  = 'reel-tile';
-      t.textContent = randSym();
       t.style.cssText = `height:${tileH}px;position:absolute;left:0;right:0;top:${r * tileH}px;`;
+      setTileSymbol(t, randSym());
       col.appendChild(t);
       tiles.push(t);
     }
@@ -90,26 +111,26 @@ async function rollColumn(c, finals, dur) {
     const t = document.createElement('div');
     t.className  = 'reel-tile';
     t.style.cssText = `height:${tileH}px;position:relative;`;
-    t.textContent = randSym();
+    setTileSymbol(t, randSym());
     strip.appendChild(t);
   }
 
   // Section 2: final symbols (will land in the visible frame)
   for (let r = 0; r < ROWS; r++) {
-    const t = document.createElement('div');
-    t.className  = 'reel-tile';
-    t.style.cssText = `height:${tileH}px;position:relative;`;
-    t.textContent = finals[r];
-    strip.appendChild(t);
+    const tf = document.createElement('div');
+    tf.className  = 'reel-tile';
+    tf.style.cssText = `height:${tileH}px;position:relative;`;
+    setTileSymbol(tf, finals[r]);
+    strip.appendChild(tf);
   }
 
   // Section 3: clone of current visible tiles (pushed out the bottom)
   for (let r = 0; r < ROWS; r++) {
-    const t = document.createElement('div');
-    t.className  = 'reel-tile';
-    t.style.cssText = `height:${tileH}px;position:relative;`;
-    t.textContent = tiles[r].textContent;
-    strip.appendChild(t);
+    const tc = document.createElement('div');
+    tc.className  = 'reel-tile';
+    tc.style.cssText = `height:${tileH}px;position:relative;`;
+    setTileSymbol(tc, tiles[r].querySelector('img')?.alt || tiles[r].textContent);
+    strip.appendChild(tc);
   }
 
   // Position strip so Section 3 (existing) aligns with the column frame
@@ -147,7 +168,8 @@ async function rollColumn(c, finals, dur) {
   // Snap finals into permanent tiles and remove the strip
   // Re-apply full inline style to guarantee position:absolute is never lost
   finals.forEach((s, r) => {
-    tiles[r].textContent = s || '?';
+    tiles[r].innerHTML = '';
+    setTileSymbol(tiles[r], s || '?');
     tiles[r].style.cssText = `height:${tileH}px;position:absolute;left:0;right:0;top:${r * tileH}px;`;
   });
   tiles.forEach(t => t.style.visibility = '');

@@ -11,6 +11,21 @@ const SCATTER = '⭐';
 const SYMBOLS = ['🍇', '🍊', '🍋', '🍎', '🍓', '🍒', '🍉', '🍑', '🍍'];
 const WEIGHTS = [1, 1, 1, 1, 1, 1, 1, 1, 1];  // Equal weight ~11% each
 
+// ── Symbol image map ──────────────────────────────────────────
+// Maps each symbol (emoji key) to its image path in assets/
+const SYMBOL_IMAGES = {
+  '🍇': 'assets/grapes.png',
+  '🍊': 'assets/orange.png',
+  '🍋': 'assets/lemon.png',
+  '🍎': 'assets/apple.png',
+  '🍓': 'assets/strawberry.png',
+  '🍒': 'assets/cherry.png',
+  '🍉': 'assets/watermelon.png',
+  '🍑': 'assets/peach.png',
+  '🍍': 'assets/pineapple.png',
+  '⭐': 'assets/scatter.png',
+};
+
 // ── Payout table — bet multipliers ──────────────────────────
 // Each entry: [min_count, multiplier]. Payout = multiplier × bet.
 // e.g. 🍒 12+ = 2× → $10 bet wins $20, $50 bet wins $100

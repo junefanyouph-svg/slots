@@ -271,6 +271,23 @@
         <button class="btn btn-bet" id="betUpBtn" onclick="changeBetStep(1)">+</button>
       </div>
       <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN 🍒</button>
+
+      <!-- Auto spin -->
+      <div class="autospin-wrap">
+        <div class="autospin-popup" id="autoSpinPopup">
+          <div class="autospin-popup-label">AUTO SPIN</div>
+          <div class="autospin-popup-options">
+            <button class="autospin-opt-btn" onclick="startAutoSpin(10)">10</button>
+            <button class="autospin-opt-btn" onclick="startAutoSpin(20)">20</button>
+            <button class="autospin-opt-btn" onclick="startAutoSpin(30)">30</button>
+            <button class="autospin-opt-btn" onclick="startAutoSpin(40)">40</button>
+            <button class="autospin-opt-btn" onclick="startAutoSpin(50)">50</button>
+            <button class="autospin-opt-btn" onclick="startAutoSpin(100)">100</button>
+            <button class="autospin-opt-btn inf" onclick="startAutoSpin('∞')">∞</button>
+          </div>
+        </div>
+        <button class="auto-spin-btn" id="autoSpinBtn" onclick="toggleAutoSpinPopup()">AUTO</button>
+      </div>
     </div>
   </div>
 

@@ -426,7 +426,7 @@ body.freespin-mode::before {
 /* ── 6. Reel Grid & Tiles ─────────────────────────────────── */
 .temple-frame {
   position: relative;
-  background: linear-gradient(180deg, #1b2d6b, #0d1a4a);
+  background: url('assets/board.png') center / cover no-repeat;
   border: 3px solid var(--gold);
   border-radius: 8px;
   box-shadow: 0 0 30px rgba(245, 200, 66, .3), inset 0 0 40px rgba(0, 0, 20, .5);
@@ -463,9 +463,24 @@ body.freespin-mode .title-banner {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(8, 15, 50, .85);
-  border: 1.5px solid rgba(245, 200, 66, .2);
-  box-shadow: inset 0 0 12px rgba(0, 0, 20, .6);
+  background: transparent;
+  border: none;
+}
+
+/* ── Tile image background ───────────────────────────────────── */
+.reel-tile {
+  background-image: url('assets/tile.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* ── Symbol images inside tiles ─────────────────────────────── */
+.sym-img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
 }
 
 /* Top/bottom fade masks on each column */
@@ -480,8 +495,8 @@ body.freespin-mode .title-banner {
   pointer-events: none;
 }
 
-.reel-col::before { top:    0; background: linear-gradient(to bottom, rgba(8, 15, 50, .85), transparent); }
-.reel-col::after  { bottom: 0; background: linear-gradient(to top,   rgba(8, 15, 50, .85), transparent); }
+.reel-col::before { top:    0; background: transparent; }
+.reel-col::after  { bottom: 0; background: transparent; }
 
 .reel-tile {
   position: absolute;
@@ -491,7 +506,7 @@ body.freespin-mode .title-banner {
   align-items: center;
   justify-content: center;
   font-size: clamp(20px, 4.5vw, 36px);
-  border-bottom: 1px solid rgba(245, 200, 66, .08);
+  border-bottom: none;
   user-select: none;
 }
 
@@ -500,22 +515,30 @@ body.freespin-mode .title-banner {
 .reel-tile.winner {
   border-radius: 6px;
   z-index: 2;
-  animation: winGlow .7s ease-in-out infinite alternate;
 }
 
-/* winner count badge removed */
+.reel-tile.winner .sym-img {
+  animation: winGlow .7s ease-in-out infinite alternate, symPop .7s ease-in-out infinite alternate;
+}
 
-/* Dim non-winning tiles when there are winners */
+/* Lightly darken non-winning tiles when there are winners */
 .has-winners .reel-tile:not(.winner):not(.scatter-tile) {
-  opacity: .28;
-  transition: opacity .25s;
+  filter: brightness(0.8);
+  transition: filter .25s;
+}
+
+.has-winners .reel-tile:not(.winner):not(.scatter-tile) .sym-img {
+  filter: brightness(0.8);
+  transition: filter .25s;
 }
 
 .reel-tile.scatter-tile {
-  background: radial-gradient(ellipse at center, rgba(255, 230, 80, .5), rgba(255, 180, 0, .2) 70%, transparent) !important;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 2px #ffe566, 0 0 22px rgba(255, 230, 80, .9);
-  animation: pop .5s ease-in-out infinite alternate;
+  animation: none;
+}
+
+.reel-tile.scatter-tile .sym-img {
+  animation: scatterGlow .5s ease-in-out infinite alternate, symPop .5s ease-in-out infinite alternate;
 }
 
 
@@ -968,7 +991,98 @@ body.freespin-mode .title-banner {
 .buy-confirm-cost  { font-family: 'Cinzel Decorative', cursive; font-size: clamp(18px, 4vw, 28px); color: #ff6b6b; text-shadow: 0 0 12px rgba(255, 100, 100, .6); }
 
 
-/* ── 10. Paytable ─────────────────────────────────────────── */
+/* ── Auto spin ───────────────────────────────────────────────── */
+.autospin-wrap {
+  position: relative;
+}
+
+.auto-spin-btn {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 1.8vw, 14px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+  background: rgba(10, 20, 60, .9);
+  color: var(--gold);
+  border: 1.5px solid rgba(245, 200, 66, .4);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+  white-space: nowrap;
+}
+
+.auto-spin-btn:hover {
+  background: rgba(245, 200, 66, .12);
+  border-color: var(--gold2);
+}
+
+.auto-spin-btn.active {
+  background: rgba(255, 60, 60, .15);
+  border-color: #f66;
+  color: #f88;
+  animation: pPulse 1s ease-in-out infinite alternate;
+}
+
+.autospin-popup {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background: linear-gradient(180deg, #1b2d6b, #0d1a4a);
+  border: 1.5px solid rgba(245, 200, 66, .4);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 160px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity .18s, transform .18s;
+  z-index: 50;
+}
+
+.autospin-popup.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.autospin-popup-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(230, 210, 150, .5);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.autospin-popup-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.autospin-opt-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, .04);
+  color: var(--gold);
+  border: 1px solid rgba(245, 200, 66, .2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+.autospin-opt-btn:hover {
+  background: rgba(245, 200, 66, .15);
+  border-color: var(--gold2);
+}
+
+.autospin-opt-btn.inf {
+  grid-column: span 3;
+  font-size: 18px;
+  letter-spacing: 0;
+  padding: 6px;
+}
 .paytable {
   position: fixed;
   inset: 0;
@@ -1200,6 +1314,16 @@ body.freespin-mode .title-banner {
 @keyframes fall     { to { transform: translateY(100vh) scale(.3); opacity: 0; } }
 
 @keyframes winGlow {
-  from { background: rgba(80, 170, 255, .22); box-shadow: inset 0 0 10px rgba(100, 190, 255, .6), inset 0 0 20px rgba(60, 140, 255, .3); filter: drop-shadow(0 0 6px rgba(100, 200, 255, .9)); }
-  to   { background: rgba(120, 200, 255, .38); box-shadow: inset 0 0 18px rgba(140, 220, 255, .9), inset 0 0 35px rgba(80, 170, 255, .5); filter: drop-shadow(0 0 12px rgba(160, 230, 255, 1)); }
+  from { filter: drop-shadow(0 0 6px rgba(100, 200, 255, .9)) drop-shadow(0 0 12px rgba(60, 140, 255, .6)); }
+  to   { filter: drop-shadow(0 0 14px rgba(160, 230, 255, 1)) drop-shadow(0 0 28px rgba(80, 170, 255, .8)); }
+}
+
+@keyframes scatterGlow {
+  from { filter: drop-shadow(0 0 6px rgba(255, 230, 80, .9)) drop-shadow(0 0 12px rgba(255, 180, 0, .6)); }
+  to   { filter: drop-shadow(0 0 16px rgba(255, 240, 120, 1)) drop-shadow(0 0 30px rgba(255, 200, 0, .9)); }
+}
+
+@keyframes symPop {
+  from { transform: scale(1); }
+  to   { transform: scale(1.18); }
 }

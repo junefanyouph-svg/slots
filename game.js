@@ -85,6 +85,80 @@ async function spin() {
 }
 
 
+// ── Auto spin ─────────────────────────────────────────────────
+
+let autoSpinCount     = 0;   // remaining auto spins (-1 = infinite)
+let autoSpinActive    = false;
+let autoSpinCancelled = false;
+
+function toggleAutoSpinPopup() {
+  if (autoSpinActive) { cancelAutoSpin(); return; }  // always allow cancel
+  if (spinning || inFreeSpins) return;
+  const popup = $('autoSpinPopup');
+  const isOpen = popup.classList.contains('open');
+  if (isOpen) { closeAutoSpinPopup(); return; }
+  popup.classList.add('open');
+  setTimeout(() => document.addEventListener('click', closeAutoSpinOutside), 0);
+}
+
+function closeAutoSpinPopup() {
+  $('autoSpinPopup').classList.remove('open');
+  document.removeEventListener('click', closeAutoSpinOutside);
+}
+
+function closeAutoSpinOutside(e) {
+  const wrap = document.querySelector('.autospin-wrap');
+  if (wrap && !wrap.contains(e.target)) closeAutoSpinPopup();
+}
+
+async function startAutoSpin(count) {
+  closeAutoSpinPopup();
+  autoSpinActive    = true;
+  autoSpinCancelled = false;
+  autoSpinCount     = count === '∞' ? -1 : count;
+
+  const btn = $('autoSpinBtn');
+  btn.classList.add('active');
+  updateAutoSpinBtn();
+
+  while (true) {
+    if (autoSpinCancelled) break;
+    if (autoSpinCount === 0) break;
+    if (balance < bet) break;
+
+    await spin();
+
+    // Wait for free spins to finish before continuing auto spin
+    while (inFreeSpins) await delay(200);
+
+    if (autoSpinCount > 0) autoSpinCount--;
+
+    // Check cancellation immediately after spin completes — before any delay
+    if (autoSpinCancelled) break;
+
+    updateAutoSpinBtn();
+    await delay(300);
+  }
+
+  autoSpinActive    = false;
+  autoSpinCancelled = false;
+  btn.classList.remove('active');
+  btn.textContent = 'AUTO';
+}
+
+function cancelAutoSpin() {
+  autoSpinCancelled = true;
+  const btn = $('autoSpinBtn');
+  btn.textContent = 'STOPPING...';
+}
+
+function updateAutoSpinBtn() {
+  const btn = $('autoSpinBtn');
+  if (!autoSpinActive) return;
+  btn.textContent = autoSpinCount === -1 ? 'STOP ∞' : `STOP (${autoSpinCount})`;
+}
+
+
 // ── Free spins ────────────────────────────────────────────────
 
 /**
