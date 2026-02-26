@@ -504,22 +504,7 @@ body.freespin-mode .title-banner {
   animation: winGlow .7s ease-in-out infinite alternate;
 }
 
-.reel-tile.winner::after {
-  content: attr(data-count) '×';
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background: var(--gold2);
-  color: #1a0800;
-  font-family: 'Cinzel', serif;
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-  padding: 2px 5px;
-  border-radius: 4px;
-  z-index: 10;
-  pointer-events: none;
-}
+/* winner count badge removed */
 
 /* Dim non-winning tiles when there are winners */
 .has-winners .reel-tile:not(.winner):not(.scatter-tile) {
